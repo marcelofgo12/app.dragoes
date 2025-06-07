@@ -1,0 +1,222 @@
+﻿<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dragões da Real</title>
+  <link rel="shortcut icon" type="image/png" href="~/assets/images/logos/logo.png" />
+  <link rel="stylesheet" href="~/assets/css/styles.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" defer></script>
+  <script src="~/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="https://dragoes.dragoesreal.pages.dev/sidebarmenu.js" defer></script>
+  <script src="https://dragoes.dragoesreal.pages.dev/app.min.js" defer></script>
+  <script src="~/assets/libs/simplebar/dist/simplebar.js" defer></script>
+  <script src="https://dragoes.dragoesreal.pages.dev//telefone-mask.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js" defer></script>
+  <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js" defer></script>
+
+  <style>
+
+    .sidebar {
+      position: fixed;
+      width: 80px;
+      height: 100%;
+      background: #3b3a3a;/* #820000; */
+      transition: width 0.3s;
+      overflow: hidden;
+      z-index: 1000;
+    }
+
+      .sidebar:hover {
+        width: 250px;
+      }
+
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+        .sidebar ul li {
+          padding: 20px;
+          color: #fff;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+          .sidebar ul li:hover {
+            background: #1e1e1e;
+            cursor: pointer;
+          }
+
+          .sidebar ul li i {
+            margin-right: 10px;
+          }
+
+          .sidebar ul li span {
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+            display: none;
+          }
+
+      .sidebar:hover ul li span {
+        opacity: 1;
+        display: contents;
+      }
+
+    .content {
+      margin-left: 80px;
+      transition: margin-left 0.3s;
+    }
+
+    .sidebar:hover ~ .content {
+      margin-left: 250px;
+    }
+
+    .form-label {
+      margin-bottom: 0px !important;
+    }
+
+    .menu_spaces {
+      padding: 10px 20px 5px !important;
+      white-space: nowrap !important;
+    }
+
+    .menu_icon {
+      font-size: 30px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+
+<body>
+  @inject IHttpContextAccessor HttpContextAccessor
+  @{
+    var fotoBase64 = HttpContextAccessor.HttpContext?.Session.GetString("FotoUsuario");
+    var isAdminStr = HttpContextAccessor.HttpContext?.Session.GetString("UserAdmin");
+    var isScannerStr = HttpContextAccessor.HttpContext?.Session.GetString("UserScanner");
+    bool isAdmin = !string.IsNullOrEmpty(isAdminStr) && bool.Parse(isAdminStr);
+    bool isScanner = !string.IsNullOrEmpty(isScannerStr) && bool.Parse(isScannerStr);
+  }
+
+  <div class="sidebar">
+    <ul>
+      <li onclick="location.href='/Home'" style="padding-left:8px;">
+        <img src="~/assets/images/logos/logo.png" alt="Logo" width="64" style="margin-right: 10px;">
+      </li>
+      <li class="menu_spaces" onclick="location.href='/Carteirinha'">
+        <i class="ti ti-qrcode menu_icon"></i>
+        <span class="menu_name">Carteirinha</span>
+      </li>
+
+      @if (isAdmin)
+      {
+        <li class="menu_spaces" onclick="location.href='/Users'">
+          <i class="ti ti-user menu_icon"></i>
+          <span class="menu_name">Usuários</span>
+        </li>
+        <li class="menu_spaces" onclick="location.href='/Departamento'">
+          <i class="ti ti-address-book menu_icon"></i>
+          <span class="menu_name">Departamentos</span>
+        </li>
+        <li class="menu_spaces" onclick="location.href='/SendMessage'">
+          <i class="ti ti-message menu_icon"></i>
+          <span class="menu_name">Mensagens</span>
+        </li>
+      }
+
+      @if (isAdmin || isScanner)
+      {
+
+        <li class="menu_spaces" onclick="location.href='/EventCreate'">
+          <i class="ti ti-calendar menu_icon"></i>
+          <span class="menu_name">Eventos</span>
+        </li>
+      }
+    </ul>
+  </div>
+
+  <div class="content">
+    <div class="body-wrapper">
+      <header class="app-header">
+        <nav class="navbar navbar-expand-lg navbar-light">
+          <ul class="navbar-nav">
+            <li class="nav-item d-block d-xl-none">
+              <a class="nav-link sidebartoggler" id="headerCollapse" href="javascript:void(0)">
+                <i class="ti ti-menu-2"></i>
+              </a>
+            </li>
+          </ul>
+          <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
+            <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+              <li class="nav-item dropdown">
+                <a class="nav-link " href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
+                  <img id="userProfileImage" src="@(!string.IsNullOrEmpty(fotoBase64) ? fotoBase64 : "./assets/images/users/user-4.jpg")" alt="" width="35" height="35" style="object-fit: contain" class="rounded-circle">
+                </a>
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
+                  <div class="message-body">
+                    <a href="/Profile" class="d-flex align-items-center gap-2 dropdown-item">
+                      <i class="ti ti-user fs-6"></i>
+                      <p class="mb-0 fs-3">Meu Perfil</p>
+                    </a>
+                    <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                      <i class="ti ti-mail fs-6"></i>
+                      <p class="mb-0 fs-3">Minhas Mensagens</p>
+                    </a>
+                    <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                      <i class="ti ti-list-check fs-6"></i>
+                      <p class="mb-0 fs-3">Minhas Tarefas</p>
+                    </a>
+                    <a href="~/" class="btn btn-outline-primary mx-3 mt-2 d-block">Sair</a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+
+      <div class="body-wrapper-inner">
+        <div class="container-fluid" style="padding: 15px; margin: 0px;">
+          @RenderBody()
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      aplicarMascaraTelefone(".telefone-mask");
+    });
+
+    const sidebar = document.querySelector('.sidebar');
+    const span = document.querySelector('.sidebar ul li span');
+
+    sidebar.addEventListener('mouseenter', () => {
+      // Adiciona a classe 'is-hovering' para iniciar a transição da opacidade
+      span.classList.add('is-hovering');
+
+      // Adiciona 'is-visible-contents' depois de 0.5 segundos
+      setTimeout(() => {
+        span.classList.add('is-visible-contents');
+      }, 500); // 500 milissegundos = 0.5 segundos
+    });
+
+    sidebar.addEventListener('mouseleave', () => {
+      // Remove as classes para esconder o elemento
+      span.classList.remove('is-hovering');
+      span.classList.remove('is-visible-contents');
+    });
+
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,253 @@
+﻿@page "{eventId}"
+@model DragoesEscola.Pages.ListaPresencaModel
+@{
+  Layout = "_Layout";
+}
+
+<div class="container mx-auto p-4" style="padding-left: 0px !important; padding-right: 0px !important; padding-top: 0px !important;">
+  <div class="flex flex-col items-center justify-center bg-white rounded-lg shadow-lg p-6 mb-8">
+    <div class="relative w-full max-w-lg bg-gray-200 rounded-lg overflow-hidden">
+      <video id="video" playsinline class="hidden w-full h-auto"></video>
+      <canvas id="canvas" class="w-full h-full block rounded-lg"></canvas>
+      <div id="loadingMessage" class="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-75 text-white text-lg font-semibold">
+        Carregando câmera...
+      </div>
+    </div>
+    <div class="alert alert-danger row col-md-4" id="divMessageError" style="margin-top:10px; display:none; margin-bottom: 0px;">
+      <p id="mensagemError"></p>
+    </div>
+    <div class="alert alert-success row col-md-4" id="divMessageSuccess" style="margin-top:10px; display:none; margin-bottom: 0px;">
+      <p id="mensagemSuccess"></p>
+    </div>
+    <div class="mt-6 w-full max-w-md">
+      <form id="qrCodeForm" method="post" class="flex flex-col sm:flex-row gap-4">
+        <input type="hidden" asp-for="Input.EventId" />
+
+
+        <input type="text" id="qrCodeInput" name="qrCodeData"
+               class="flex-grow p-3 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 bg-gray-100 text-gray-700"
+               placeholder="Aguardando QR Code..." />
+        <button type="submit" id="submitButton"
+                class="px-6 py-3 bg-green-600 text-white font-semibold rounded-md shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
+          Enviar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Carterinha
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Nome
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Departamento
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Data/Hora da Chegada
+            </th>
+          </tr>
+        </thead>
+        <tbody id="qrCodeTableBody" class="bg-white divide-y divide-gray-200">
+          @if (Model.ScannedQRCodes != null)
+          {
+            @foreach (var qrCode in Model.ScannedQRCodes)
+            {
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  @qrCode.Carterinha
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  @qrCode.UserNome
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  @qrCode.Departamento
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  @qrCode.Data?.ToString("dd/MM/yyyy HH:mm")
+                </td>
+              </tr>
+            }
+          }
+          else
+          {
+            <tr>
+              <td colspan="2" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                Nenhum QR Code lido ainda.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.1.0/dist/jsQR.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+        },
+      }
+    }
+  }
+</script>
+<script>
+  const video = document.getElementById('video');
+  const canvasElement = document.getElementById('canvas');
+  const canvas = canvasElement.getContext('2d');
+  const loadingMessage = document.getElementById('loadingMessage');
+  const qrCodeInput = document.getElementById('qrCodeInput');
+  const qrCodeForm = document.getElementById('qrCodeForm');
+  const qrCodeTableBody = document.getElementById('qrCodeTableBody');
+  const submitButton = document.getElementById('submitButton');
+  const EventIdInput = document.getElementById('Input_EventId');
+
+  let scanning = false;
+  let lastScannedData = null;
+  async function startCamera() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      video.srcObject = stream;
+      video.setAttribute("playsinline", true);
+      video.play();
+      requestAnimationFrame(tick);
+      loadingMessage.hidden = true;
+      scanning = true;
+    } catch (err) {
+      console.error("Erro ao acessar a câmera: ", err);
+      loadingMessage.innerText = "Não foi possível acessar a câmera. Por favor, verifique as permissões.";
+      submitButton.disabled = true;
+    }
+  }
+
+  function tick() {
+    if (video.readyState === video.HAVE_ENOUGH_DATA && scanning) {
+      canvasElement.height = video.videoHeight;
+      canvasElement.width = video.videoWidth;
+
+      canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+
+      const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+
+      const qrCode = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: "dontInvert",
+      });
+
+      if (qrCode) {
+        drawLine(qrCode.location.topLeftCorner, qrCode.location.topRightCorner);
+        drawLine(qrCode.location.topRightCorner, qrCode.location.bottomRightCorner);
+        drawLine(qrCode.location.bottomRightCorner, qrCode.location.bottomLeftCorner);
+        drawLine(qrCode.location.bottomLeftCorner, qrCode.location.topLeftCorner);
+
+        if (qrCode.data && qrCode.data !== lastScannedData) {
+          lastScannedData = qrCode.data;
+          qrCodeInput.value = qrCode.data;
+
+          scanning = false;
+          video.pause();
+
+          submitQRCodeData(qrCode.data);
+        }
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function drawLine(begin, end) {
+    canvas.beginPath();
+    canvas.moveTo(begin.x, begin.y);
+    canvas.lineTo(end.x, end.y);
+    canvas.lineWidth = 4;
+    canvas.strokeStyle = "#FF3B58";
+    canvas.stroke();
+  }
+
+  async function submitQRCodeData(data) {
+    const formData = new FormData();
+    formData.append('qrCodeData', data);
+    formData.append('eventId', $("#Input_EventId").val());
+
+    try {
+      const response = await fetch('?handler=Scan', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          //const beep = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=');
+          //beep.play();
+          const newRow = `
+                  <tr>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          ${result.qrCode.carterinha}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          ${result.qrCode.userNome}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          ${result.qrCode.departamento}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          ${new Date(result.qrCode.data).toLocaleString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                      </td>
+                  </tr>`;
+          const noDataRow = qrCodeTableBody.querySelector('tr td[colspan="2"]');
+          if (noDataRow) {
+            noDataRow.parentElement.remove();
+          }
+          qrCodeTableBody.insertAdjacentHTML('afterbegin', newRow);
+
+          $("#mensagemSuccess")[0].innerText = result.message
+          $("#divMessageSuccess").show();
+
+          qrCodeInput.value = '';
+          video.play();
+          scanning = true;
+          setTimeout(() => { $("#divMessageSuccess").hide(); }, 3000)
+        } else {
+
+          $("#mensagemError")[0].innerText = result.message
+          $("#divMessageError").show();
+
+          qrCodeInput.value = '';
+          video.play();
+          scanning = true;
+          setTimeout(() => { $("#divMessageError").hide(); }, 3000)
+        }
+      } else {
+        setTimeout(() => {
+          qrCodeInput.value = '';
+          lastScannedData = null;
+          video.play();
+          scanning = true;
+        }, 200);
+      }
+    } catch (error) {
+      setTimeout(() => {
+        qrCodeInput.value = '';
+        lastScannedData = null;
+        video.play();
+        scanning = true;
+      }, 200);
+    }
+  }
+
+  window.onload = startCamera;
+
+</script>

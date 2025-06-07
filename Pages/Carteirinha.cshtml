@@ -1,0 +1,213 @@
+﻿@page
+@model DragoesEscola.Pages.CarteirinhaModel
+@{
+}
+@{
+  if (Model.Usuario.pago)
+  {
+    <style>
+      .carteirinha-container {
+        position: relative;
+        width: 375px;
+        height: 667px;
+        perspective: 1000px;
+      }
+
+      .carteirinha {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        transition: transform 0.8s;
+        transform-style: preserve-3d;
+      }
+
+      .carteirinha-lado {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        backface-visibility: hidden;
+      }
+
+      .carteirinha-frente {
+        transform: rotateY(0deg);
+      }
+
+      .carteirinha-verso {
+        transform: rotateY(180deg);
+        background-size: cover;
+      }
+
+      .virada {
+        transform: rotateY(180deg);
+      }
+    </style>
+
+    <div class="carteirinha-container col-md-12">
+      <div class="carteirinha">
+        <div class="carteirinha-lado carteirinha-frente">
+          <div id="mergedImageContainer">
+          </div>
+        </div>
+        <div class="carteirinha-lado carteirinha-verso">
+          <img src="./assets/images/Carteirinha/2026/Verso.png" id="carteirinha-verso" />
+        </div>
+      </div>
+    </div>
+
+
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script>
+
+      function mergeImageWithQRCode(backgroundImageSrc, qrCodeContent, textLines, userPhotoBase64, callback) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const backgroundImg = new Image();
+        const qrCodeImg = new Image();
+        const userPhotoImg = new Image();
+
+        backgroundImg.onload = function () {
+          canvas.width = backgroundImg.width;
+          canvas.height = backgroundImg.height;
+          ctx.drawImage(backgroundImg, 0, 0);
+
+          qrCodeImg.onload = function () {
+            const qrCodeWidth = 300;
+            const qrCodeHeight = 300;
+            const qrCodeX = 145;
+            const qrCodeY = 395;
+
+            ctx.drawImage(qrCodeImg, qrCodeX, qrCodeY, qrCodeWidth, qrCodeHeight);
+
+            const drawTextLines = () => {
+              ctx.font = '22px Arial';
+              ctx.fillStyle = 'white';
+              ctx.textAlign = 'left';
+
+              const textX = 50;
+              let textY = 830;
+              const lineHeight = 25;
+
+              textLines.forEach(line => {
+                ctx.fillText(line, textX, textY);
+                textY += lineHeight;
+              });
+            };
+
+            if (userPhotoBase64) {
+              userPhotoImg.onload = function () {
+                const destSize = 200;
+                const destX = 60;
+                const destY = 60;
+
+                // Simular object-fit: cover
+                const imgAspect = userPhotoImg.width / userPhotoImg.height;
+                const boxAspect = 1; // quadrado
+
+                let sx, sy, sWidth, sHeight;
+
+                if (imgAspect > boxAspect) {
+                  sHeight = userPhotoImg.height;
+                  sWidth = sHeight * boxAspect;
+                  sx = (userPhotoImg.width - sWidth) / 2;
+                  sy = 0;
+                } else {
+                  sWidth = userPhotoImg.width;
+                  sHeight = sWidth / boxAspect;
+                  sx = 0;
+                  sy = (userPhotoImg.height - sHeight) / 2;
+                }
+
+                // Clip circular
+                //ctx.save();
+                //ctx.beginPath();
+                //ctx.arc(destX + destSize / 2, destY + destSize / 2, destSize / 2, 0, Math.PI * 2);
+                //ctx.closePath();
+                //ctx.clip();
+
+                ctx.drawImage(
+                  userPhotoImg,
+                  sx, sy, sWidth, sHeight,
+                  destX, destY, destSize, destSize
+                );
+
+                ctx.restore(); // remove o clip
+
+                drawTextLines();
+                const mergedImageData = canvas.toDataURL('image/png');
+                callback(mergedImageData);
+              };
+              userPhotoImg.src = userPhotoBase64;
+            } else {
+              drawTextLines();
+              const mergedImageData = canvas.toDataURL('image/png');
+              callback(mergedImageData);
+            }
+          };
+
+          generateQRCodeImage(qrCodeContent, qrCodeImg);
+        };
+
+        backgroundImg.src = backgroundImageSrc;
+      }
+
+      function generateQRCodeImage(qrCodeContent, imgElement) {
+        const qrcodeDiv = document.createElement('div');
+        const qrcode = new QRCode(qrcodeDiv, {
+          text: qrCodeContent,
+          width: 300,
+          height: 300,
+        });
+
+        const canvas = qrcodeDiv.querySelector('canvas');
+        if (canvas) {
+          imgElement.src = canvas.toDataURL("image/png");
+        } else {
+          console.error("Não foi possível encontrar o elemento canvas no QR code.");
+        }
+      }
+
+      window.onload = function () {
+        const backgroundImageSrc = '@Url.Content("./assets/images/Carteirinha/2026/Frente.png")';
+        const qrCodeContent = "@Model.Usuario.n_carteirinha.ToString().PadLeft(6, '0').ToUpper()";
+        const userPhotoBase64 = "@Html.Raw(Model.Usuario.foto)";
+
+        const textLines = [
+          "NOME: @Html.Raw(Model.Usuario.nome.ToString().ToUpper())",
+          "",
+          "MATRÍCULA: @Model.Usuario.n_carteirinha.ToString().PadLeft(6, '0').ToUpper()",
+          "",
+          "RG: @Html.Raw(Model.Usuario.rg.ToString().ToUpper())",
+          "",
+          "DEPARTAMENTO: @Html.Raw(@Model.Usuario.departamento.ToString().ToUpper())"
+        ];
+
+        mergeImageWithQRCode(backgroundImageSrc, qrCodeContent, textLines, userPhotoBase64, function (mergedImage) {
+          const carteirinhaverso = document.getElementById("carteirinha-verso");
+          const resultImage = document.createElement('img');
+          resultImage.src = mergedImage;
+
+          resultImage.style.maxWidth = 'calc(100vw - 50px)';
+          carteirinhaverso.style.maxWidth = 'calc(100vw - 50px)';
+
+          const mergedImageContainer = document.getElementById('mergedImageContainer');
+          if (mergedImageContainer) {
+            mergedImageContainer.appendChild(resultImage);
+          } else {
+            console.error("Container para a imagem mesclada não encontrado.");
+          }
+
+          const carteirinha = document.querySelector('.carteirinha');
+          carteirinha.addEventListener('click', function () {
+            carteirinha.classList.toggle('virada');
+          });
+        });
+      };
+
+    </script>
+  }
+  else
+  {
+    <h1 accesskey="" class="text-center">Carteirinha não disponível. Entre em contato com a Secretária pelo WhatsApp <a href="http://wa.me/5511992826341">(11) 99282-6341</a></h1>
+  }
+}
+

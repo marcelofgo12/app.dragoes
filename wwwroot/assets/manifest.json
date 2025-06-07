@@ -1,0 +1,20 @@
+{
+  "name": "Carteirinha DDR 2025",
+  "short_name": "Carteirinha DDR 2025",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#ff0000",
+  "icons": [
+    {
+      "src": "/assets/images/logos/logo192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/logos/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

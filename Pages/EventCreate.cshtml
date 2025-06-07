@@ -1,0 +1,548 @@
+﻿@page
+@model DragoesEscola.Pages.EventCreateModel
+@{
+  ViewData["Title"] = "Criar/Editar Evento";
+}
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+  var isAdminStr = HttpContextAccessor.HttpContext?.Session.GetString("UserAdmin");
+  var isScannerStr = HttpContextAccessor.HttpContext?.Session.GetString("UserScanner");
+  bool isAdmin = !string.IsNullOrEmpty(isAdminStr) && bool.Parse(isAdminStr);
+  bool isScanner = !string.IsNullOrEmpty(isScannerStr) && bool.Parse(isScannerStr);
+}
+
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales/pt-br.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<style>
+  .fc-day,
+  .fc-daygrid-day-frame,
+  .fc-timegrid-slot,
+  .fc-col-header-cell {
+    border: solid black 1px !important;
+  }
+
+  tr {
+    height: 50px !important;
+  }
+
+  .fc-scrollgrid-section:has(.fc-timegrid-divider) {
+    height: 5px !important;
+  }
+
+  .fc .fc-daygrid-day.fc-day-today,
+  .fc-day-today,
+  .fc .fc-timegrid-col.fc-day-today {
+    background-color: #c3e1e6;
+  }
+
+  .fc-scrollgrid-section .fc-scrollgrid-section-body {
+    display: none !important;
+  }
+</style>
+
+<div class="card" style="padding:15px">
+  <div class="row col-md-12">
+    <div class="col-md-2">
+      <input type="text" id="miniCalendar" class="form-control form-control-sm" placeholder="Selecionar dia" style="margin-bottom: 10px;" />
+    </div>
+
+  </div>
+
+  <div id='calendar'></div>
+
+  <div class="modal fade" id="newEventModal" tabindex="-1" aria-labelledby="newEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="newEventModalLabel"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="newEventForm">
+            <input type="hidden" id="eventId" name="id">
+
+            <div class="mb-3">
+              <label for="eventName" class="form-label">Nome do Evento</label>
+              <input type="text" class="form-control" id="eventName" name="Nome" required>
+            </div>
+            <div class="mb-3">
+              <label for="eventDescription" class="form-label">Descrição</label>
+              <textarea class="form-control" id="eventDescription" name="Descricao" rows="3"></textarea>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="DataInicio" class="form-label">Inicio</label>
+                <input type="datetime-local" class="form-control" id="eventStart" name="DataInicio">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="DataFim" class="form-label">Fim</label>
+                <input type="datetime-local" class="form-control" id="eventEnd" name="DataFim">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="eventCep" class="form-label">CEP</label>
+                <input type="text" class="form-control" onblur="preencherEndereco()" id="eventCep" name="Cep">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="eventEndereco" class="form-label">Endereço</label>
+                <input type="text" class="form-control" id="eventEndereco" name="Endereco">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label for="eventNumero" class="form-label">Número</label>
+                <input type="text" class="form-control" id="eventNumero" name="Numero">
+              </div>
+              <div class="col-md-8 mb-3">
+                <label for="eventBairro" class="form-label">Bairro</label>
+                <input type="text" class="form-control" id="eventBairro" name="Bairro">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="eventCidade" class="form-label">Cidade</label>
+                <input type="text" class="form-control" id="eventCidade" name="Cidade">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="eventEstado" class="form-label">Estado</label>
+                <input type="text" class="form-control" id="eventEstado" name="Estado" maxlength="2">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="eventType" class="form-label">Tipo de Evento</label>
+                <select class="form-select" id="eventType" name="Tipo">
+                  <option value="1">Reunião</option>
+                  <option value="2">Tarefa</option>
+                  <option value="3">Outro</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3 form-check d-flex align-items-center">
+                <div>
+                  <input type="checkbox" class="form-check-input" id="eventPublic" name="PublicEvent" value="true">
+                  <label class="form-check-label" for="eventPublic">Evento Público</label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
+          @{
+            if (isAdmin || isScanner)
+            {
+              <button type="button" class="btn btn-warning" id="marcarPresencaEventBtn">Marcar Presença</button>
+            }
+            if (isAdmin)
+            {
+              <button type="button" class="btn btn-primary" id="saveEventBtn">Salvar Evento</button>
+            }
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+const isEditable = @((isAdmin).ToString().ToLower());
+
+  if (!isEditable) {
+    document.querySelectorAll('#newEventForm input, #newEventForm textarea, #newEventForm select')
+      .forEach(el => el.setAttribute('readonly', 'readonly'));
+
+    document.querySelectorAll('#newEventForm select, #newEventForm input[type="checkbox"]')
+      .forEach(el => el.setAttribute('disabled', 'disabled'));
+  }
+
+  function preencherEndereco() {
+    var eventCepInput = document.getElementById('eventCep');
+    var eventEnderecoInput = document.getElementById('eventEndereco');
+    var eventBairroInput = document.getElementById('eventBairro');
+    var eventCidadeInput = document.getElementById('eventCidade');
+    var eventEstadoInput = document.getElementById('eventEstado');
+
+    const cep = eventCepInput.value.replace(/\D/g, '');
+    if (cep.length !== 8) {
+      alert('CEP inválido!');
+      return;
+    }
+
+    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+      .then(response => response.json())
+      .then(data => {
+        if (!data.erro) {
+          eventEnderecoInput.value = data.logradouro || '';
+          eventBairroInput.value = data.bairro || '';
+          eventCidadeInput.value = data.localidade || '';
+          eventEstadoInput.value = data.uf || '';
+
+          eventEnderecoInput.readOnly = !!data.logradouro;
+          eventBairroInput.readOnly = !!data.bairro;
+          eventCidadeInput.readOnly = !!data.localidade;
+          eventEstadoInput.readOnly = !!data.uf;
+        } else {
+          eventEnderecoInput.readOnly = false;
+          eventBairroInput.readOnly = false;
+          eventCidadeInput.readOnly = false;
+          eventEstadoInput.readOnly = false;
+
+          eventEnderecoInput.value = '';
+          eventBairroInput.value = '';
+          eventCidadeInput.value = '';
+          eventEstadoInput.value = '';
+        }
+      })
+      .catch(() => {
+        eventEnderecoInput.readOnly = false;
+        eventBairroInput.readOnly = false;
+        eventCidadeInput.readOnly = false;
+        eventEstadoInput.readOnly = false;
+
+        eventEnderecoInput.value = '';
+        eventBairroInput.value = '';
+        eventCidadeInput.value = '';
+        eventEstadoInput.value = '';
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+
+    function toLocalISOString(date) {
+      const offsetMs = date.getTimezoneOffset() * 60 * 1000;
+      const localDate = new Date(date.getTime() - offsetMs);
+      return localDate.toISOString().slice(0, 19);
+    }
+
+    var calendarEl = document.getElementById('calendar');
+    var newEventModal = new bootstrap.Modal(document.getElementById('newEventModal'));
+    var modalTitle = document.getElementById('newEventModalLabel');
+
+    var eventIdInput = document.getElementById('eventId');
+    var eventNameInput = document.getElementById('eventName');
+    var eventDescriptionInput = document.getElementById('eventDescription');
+    var eventCepInput = document.getElementById('eventCep');
+    var eventEnderecoInput = document.getElementById('eventEndereco');
+    var eventNumeroInput = document.getElementById('eventNumero');
+    var eventBairroInput = document.getElementById('eventBairro');
+    var eventCidadeInput = document.getElementById('eventCidade');
+    var eventEstadoInput = document.getElementById('eventEstado');
+    var eventTypeSelect = document.getElementById('eventType');
+    var eventPublicCheckbox = document.getElementById('eventPublic');
+
+    var eventStartInput = document.getElementById('eventStart');
+    var eventEndInput = document.getElementById('eventEnd');
+
+
+    if (eventCepInput) {
+      eventCepInput.addEventListener('input', function (e) {
+        let value = e.target.value;
+        value = value.replace(/\D/g, '');
+        if (value.length > 5) {
+          value = value.substring(0, 5) + '-' + value.substring(5, 8);
+        } else if (value.length > 0) {
+          value = value;
+        }
+
+        e.target.value = value;
+      });
+
+      function formatCepInput(inputElement) {
+        let value = inputElement.value;
+        value = value.replace(/\D/g, '');
+        if (value.length > 5) {
+          value = value.substring(0, 5) + '-' + value.substring(5, 8);
+        }
+        inputElement.value = value;
+      }
+    }
+
+    var currentFullCalendarEvent = null;
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      height: '730px',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      buttonText: {
+        today: 'Hoje',
+        month: 'Mês',
+        week: 'Semana',
+        day: 'Dia',
+        list: 'Lista'
+      },
+      slotDuration: '01:00:00',
+      slotLabelFormat: {
+        hour: '2-digit', // Garante dois dígitos para a hora (ex: 01, 10)
+        minute: '2-digit', // Garante dois dígitos para o minuto (00)
+        omitZeroMinute: false, // Força a exibição de ":00" mesmo se os minutos forem zero
+        hour12: false // Usa formato 24 horas (00-23)
+      },
+      initialView: 'timeGridDay',
+      locale: 'pt-br',
+      editable: true,
+      selectable: true,
+
+      events: function (fetchInfo, successCallback, failureCallback) {
+        fetch('@Url.Page("EventCreate", "EventsJson")')
+          .then(response => response.json())
+          .then(data => {
+            const events = data.map(event => ({
+              id: event.id,
+              title: event.nome,
+              start: event.dataInicio,
+              end: event.dataFim,
+              extendedProps: {
+                description: event.descricao,
+                cep: event.cep,
+                endereco: event.endereco,
+                numero: event.numero,
+                bairro: event.bairro,
+                cidade: event.cidade,
+                estado: event.estado,
+                tipo: event.tipo,
+                publicEvent: event.publicEvent
+              },
+              backgroundColor: event.tipo === 1 ? '#4CAF50' : '#2196F3',
+              borderColor: event.tipo === 1 ? '#4CAF50' : '#2196F3'
+            }));
+            successCallback(events);
+          })
+          .catch(error => {
+            console.error('Erro ao carregar eventos:', error);
+            failureCallback(error);
+          });
+      },
+
+  @{
+    if (isAdmin)
+    {
+      <text>
+          select: function (info) {
+            currentFullCalendarEvent = null;
+            modalTitle.textContent = 'Novo Evento';
+
+            document.getElementById('newEventForm').reset();
+            eventIdInput.value = '';
+            eventNameInput.value = ''; // Limpa explicitamente, pois reset() nem sempre limpa text inputs
+            eventDescriptionInput.value = '';
+            eventCepInput.value = '';
+            eventEnderecoInput.value = '';
+            eventNumeroInput.value = '';
+            eventBairroInput.value = '';
+            eventCidadeInput.value = '';
+            eventEstadoInput.value = '';
+            eventTypeSelect.value = '1'; // Define um valor padrão
+            eventPublicCheckbox.checked = true; // Define como true por padrão
+
+            eventStartInput.value = toLocalISOString(info.start);
+            eventEndInput.value = toLocalISOString(info.end);
+
+            newEventModal.show();
+          },
+      </text>
+    }
+  }
+
+      eventClick: function (info) {
+        currentFullCalendarEvent = info.event;
+        modalTitle.textContent = 'Editar Evento';
+
+        eventIdInput.value = info.event.id || '';
+        eventNameInput.value = info.event.title || '';
+        eventDescriptionInput.value = info.event.extendedProps.description || '';
+        eventCepInput.value = info.event.extendedProps.cep || '';
+        eventEnderecoInput.value = info.event.extendedProps.endereco || '';
+        eventNumeroInput.value = info.event.extendedProps.numero || '';
+        eventBairroInput.value = info.event.extendedProps.bairro || '';
+        eventCidadeInput.value = info.event.extendedProps.cidade || '';
+        eventEstadoInput.value = info.event.extendedProps.estado || '';
+        eventTypeSelect.value = info.event.extendedProps.tipo || '1';
+        eventPublicCheckbox.checked = info.event.extendedProps.publicEvent || false;
+
+        // Formata as datas para o padrão ISO (YYYY-MM-DDTHH:mm:ss)
+        // FullCalendar.EventObject.start/end são objetos Date
+        eventStartInput.value = info.event.start ? toLocalISOString(info.event.start) : '';
+        eventEndInput.value = info.event.end ? toLocalISOString(info.event.end) : '';
+
+        newEventModal.show();
+      },
+
+      eventDrop: function (info) {
+        const updatedEvent = {
+          id: info.event.id,
+          Nome: info.event.title,
+          Descricao: info.event.extendedProps.description,
+          Cep: info.event.extendedProps.cep,
+          Endereco: info.event.extendedProps.endereco,
+          Numero: info.event.extendedProps.numero,
+          Bairro: info.event.extendedProps.bairro,
+          Cidade: info.event.extendedProps.cidade,
+          Estado: info.event.extendedProps.estado,
+          DataInicio: toLocalISOString(info.event.start),
+          DataFim: info.event.end ? toLocalISOString(info.event.end) : toLocalISOString(info.event.start),
+          Tipo: info.event.extendedProps.tipo,
+          PublicEvent: info.event.extendedProps.publicEvent
+        };
+        saveEventToServer(updatedEvent, 'PUT', info.event);
+      },
+
+      eventResize: function (info) {
+        const updatedEvent = {
+          id: info.event.id,
+          Nome: info.event.title,
+          Descricao: info.event.extendedProps.description,
+          Cep: info.event.extendedProps.cep,
+          Endereco: info.event.extendedProps.endereco,
+          Numero: info.event.extendedProps.numero,
+          Bairro: info.event.extendedProps.bairro,
+          Cidade: info.event.extendedProps.cidade,
+          Estado: info.event.extendedProps.estado,
+          DataInicio: toLocalISOString(info.event.start),
+          DataFim: info.event.end ? toLocalISOString(info.event.end) : toLocalISOString(info.event.start),
+          Tipo: info.event.extendedProps.tipo,
+          PublicEvent: info.event.extendedProps.publicEvent
+        };
+        saveEventToServer(updatedEvent, 'PUT', info.event);
+      }
+    });
+
+    calendar.render();
+
+    flatpickr("#miniCalendar", {
+      dateFormat: "d/m/Y", // Visual para o usuário
+      defaultDate: new Date(),
+      onChange: function (selectedDates, dateStr, instance) {
+        if (selectedDates.length > 0) {
+          calendar.gotoDate(selectedDates[0]); // ✅ Passa objeto Date
+        }
+      }
+    });
+
+    async function saveEventToServer(eventData, isUpdate, fullCalendarEvent = null) {
+      const url = '@Url.Page("EventCreate", "CreateEventJson")';
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(eventData)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+
+        if (!isUpdate) {
+          calendar.addEvent({
+            id: responseData.id,
+            title: responseData.nome,
+            start: responseData.dataInicio,
+            end: responseData.dataFim,
+            extendedProps: {
+              description: responseData.descricao,
+              cep: responseData.cep,
+              endereco: responseData.endereco,
+              numero: responseData.numero,
+              bairro: responseData.bairro,
+              cidade: responseData.cidade,
+              estado: responseData.estado,
+              tipo: responseData.tipo,
+              publicEvent: responseData.publicEvent
+            },
+            backgroundColor: responseData.tipo === 1 ? '#4CAF50' : '#2196F3',
+            borderColor: responseData.tipo === 1 ? '#4CAF50' : '#2196F3'
+          });
+          alert('Evento criado com sucesso!');
+        } else {
+          if (fullCalendarEvent) {
+            fullCalendarEvent.setProp('title', eventData.Nome);
+            fullCalendarEvent.setExtendedProp('description', eventData.Descricao);
+            fullCalendarEvent.setExtendedProp('cep', eventData.Cep);
+            fullCalendarEvent.setExtendedProp('endereco', eventData.Endereco);
+            fullCalendarEvent.setExtendedProp('numero', eventData.Numero);
+            fullCalendarEvent.setExtendedProp('bairro', eventData.Bairro);
+            fullCalendarEvent.setExtendedProp('cidade', eventData.Cidade);
+            fullCalendarEvent.setExtendedProp('estado', eventData.Estado);
+            fullCalendarEvent.setExtendedProp('tipo', eventData.Tipo);
+            fullCalendarEvent.setExtendedProp('publicEvent', eventData.PublicEvent);
+            fullCalendarEvent.setStart(eventData.DataInicio);
+            fullCalendarEvent.setEnd(eventData.DataFim);
+            fullCalendarEvent.setProp('backgroundColor', eventData.Tipo === 1 ? '#4CAF50' : '#2196F3');
+            fullCalendarEvent.setProp('borderColor', eventData.Tipo === 1 ? '#4CAF50' : '#2196F3');
+          }
+          alert('Evento atualizado com sucesso!');
+        }
+
+        newEventModal.hide();
+        calendar.unselect();
+      } catch (error) {
+        console.error('Erro ao salvar evento:', error);
+        alert('Erro ao salvar evento: ' + error.message);
+        if (isUpdate && fullCalendarEvent) {
+          fullCalendarEvent.revert();
+        }
+      }
+    }
+
+                @{
+    if (isAdmin)
+    {
+      <text>
+      document.getElementById('saveEventBtn').addEventListener('click', function () {
+        const form = document.getElementById('newEventForm');
+        if (!form.reportValidity()) {
+          return;
+        }
+
+        const eventData = {
+          id: eventIdInput.value ? parseInt(eventIdInput.value) : 0,
+          Nome: eventNameInput.value,
+          Descricao: eventDescriptionInput.value,
+          Cep: eventCepInput.value,
+          Endereco: eventEnderecoInput.value,
+          Numero: eventNumeroInput.value,
+          Bairro: eventBairroInput.value,
+          Cidade: eventCidadeInput.value,
+          Estado: eventEstadoInput.value,
+          DataInicio: eventStartInput.value,
+          DataFim: eventEndInput.value,
+          Tipo: parseInt(eventTypeSelect.value, 10),
+          PublicEvent: eventPublicCheckbox.checked
+        };
+
+        const isUpdate = eventData.id !== 0;
+
+        saveEventToServer(eventData, isUpdate, currentFullCalendarEvent);
+      });
+      </text>
+    }
+  }
+
+    document.getElementById('marcarPresencaEventBtn').addEventListener('click', function () {
+
+      window.open("./ListaPresenca/" + $("#eventId").val())
+
+    });
+
+    document.getElementById('newEventModal').addEventListener('hidden.bs.modal', function () {
+      calendar.unselect();
+      currentFullCalendarEvent = null;
+    });
+  });
+
+</script>

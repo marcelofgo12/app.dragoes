@@ -1,0 +1,34 @@
+﻿@page
+@model DragoesEscola.Pages.SendMessageModel
+@{
+  ViewData["Title"] = "Enviar Mensagem";
+}
+
+<div class="card row col-md-12" style="padding: 30px">
+  <h2>Enviar Mensagem</h2>
+
+  <form method="post">
+    <div class="col-md-7">
+
+      <div class="form-group" style="padding:15px">
+        <label asp-for="Message.Subject">Assunto</label>
+        <input asp-for="Message.Subject" class="form-control" />
+      </div>
+      <div class="form-group" style="padding:15px">
+        <label asp-for="Message.To">Destinatário</label>
+        <select asp-for="Message.To" class="form-control" required>
+          <option value="0">Todos</option>
+          <option value="1" selected>Pagos</option>
+          <option value="2">Pendentes</option>
+        </select>
+      </div>
+      <div class="form-group" style="padding:15px">
+        <label for="Message">Mensagem</label>
+        <textarea class="form-control" asp-for="Message.Body" rows="5" required></textarea>
+      </div>
+      <div class="form-group" style="padding:15px; text-align:right">
+        <button type="submit" class="btn btn-primary">Enviar</button>
+      </div>
+    </div>
+  </form>
+</div>

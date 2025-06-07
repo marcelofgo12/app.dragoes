@@ -1,0 +1,145 @@
+﻿@page
+@model DragoesEscola.Pages.ProfileModel
+@{
+}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            <div class="profile-image-container">
+              <div class="mb-3 d-flex flex-column align-items-center">
+                <img id="profile-preview" class="profile-image" style="width: 120px; border: 1px solid black; padding: 3px;" src="@Model.Usuario.foto" alt="Foto de Perfil">
+
+                <div class="camera-icon mt-2" id="camera-button" data-bs-toggle="modal" data-bs-target="#cameraModal">
+                  <iconify-icon icon="mdi:camera" style="font-size: 35px; border: 1px solid black; border-radius: 20px; padding: 3px;"></iconify-icon>
+                </div>
+              </div>
+              <div class="row col-md-12 mb-3">
+                <div class="col-md-12">
+                  <input type="file" id="upload-foto" accept="image/*" class="form-control form-control-sm" onchange="loadFile(event)">
+                </div>
+              </div>
+              <input type="hidden" asp-for="Usuario.Id" />
+              <input type="hidden" asp-for="Usuario.foto" id="foto-base64" />
+            </div>
+
+
+            <div class="row col-md-12 mb-3">
+              <div class="col-md-8 mb-3">
+                <label class="form-label">Nome</label>
+                <input type="text" class="form-control form-control-sm" asp-for="Usuario.nome">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">RG</label>
+                <input type="text" class="form-control form-control-sm" asp-for="Usuario.rg">
+              </div>
+            </div>
+
+            <div class="row col-md-12 mb-3">
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Data de Nascimento</label>
+                <input type="date" class="form-control form-control-sm" asp-for="Usuario.data_nascimento">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Telefone</label>
+                <input type="text" class="form-control form-control-sm telefone-mask" asp-for="Usuario.telefone">
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-sm btn-success w-100">Salvar Alterações</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <!-- tamanho maior -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cameraModalLabel">Tirar Foto de Perfil</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body text-center">
+        <video id="camera-stream" autoplay playsinline style="width:100%; max-height: 400px;"></video>
+        <canvas id="camera-canvas" style="display:none;"></canvas>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="tirar-foto">Capturar Foto</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  var loadFile = function (event) {
+    var output = document.getElementById('profile-preview');
+    var reader = new FileReader();
+    reader.onload = function () {
+      output.src = reader.result;
+      document.getElementById('foto-base64').value = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  };
+
+  const video = document.getElementById("camera-stream");
+  const canvas = document.getElementById("camera-canvas");
+  const tirarFotoBtn = document.getElementById("tirar-foto");
+  const imgPreview = document.getElementById("profile-preview");
+  const fotoInput = document.getElementById("foto-base64");
+
+  let stream;
+
+  const cameraModal = document.getElementById('cameraModal');
+  cameraModal.addEventListener('shown.bs.modal', async () => {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      video.srcObject = stream;
+    } catch (err) {
+      alert("Erro ao acessar a câmera: " + err.message);
+    }
+  });
+
+  cameraModal.addEventListener('hidden.bs.modal', () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+    }
+    video.srcObject = null;
+  });
+
+  tirarFotoBtn.addEventListener("click", () => {
+    const context = canvas.getContext("2d");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const imageData = canvas.toDataURL("image/png");
+    imgPreview.src = imageData;
+    fotoInput.value = imageData;
+
+    // Fecha o modal
+    const modal = bootstrap.Modal.getInstance(cameraModal);
+    modal.hide();
+  });
+
+   document.addEventListener('DOMContentLoaded', function () {
+    @if (TempData["Sucess"] != null && Convert.ToBoolean(TempData["Sucess"] + "") == true)
+    {
+     <text>
+     Swal.fire({
+       icon: 'success',
+       title: 'Sucesso!',
+       text: '@Html.Raw(TempData["Mensagem"])',
+     });
+     </text>
+   }
+ });
+</script>

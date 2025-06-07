@@ -1,0 +1,107 @@
+﻿@page
+
+@model DragoesEscola.Pages.HomeModel
+@{
+  ViewData["Title"] = "Home";
+}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      @*@{
+        if (DateTime.Now >= new DateTime(2025, 06, 06, 01, 19, 00))
+        {
+          <div class="card">
+            <img src="~/assets/images/Theme/background-dragoes.jpg" />
+          </div>
+        }
+        else
+        {*@
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Informações do Usuário</h5>
+          <div class="text-center">
+            <img id="userProfileImage" src="@(!string.IsNullOrEmpty(Model.Usuario.foto) ? Model.Usuario.foto : "./assets/images/users/user-4.jpg")" alt="Foto de Perfil" style="object-fit: contain" class="rounded-circle mb-3" width="150" height="150">
+          </div>
+          <p class="card-text"><strong>Nome:</strong> @Model.Usuario.nome</p>
+          <p class="card-text"><strong>RG:</strong> @Model.Usuario.rg</p>
+          <p class="card-text"><strong>Telefone:</strong> @Model.Usuario.telefone</p>
+        </div>
+      </div>
+      @*}
+        }*@
+
+
+    </div>
+    <div class="col-md-6">
+      <h2>Próximos Eventos:</h2>
+      @{
+        int deg = 45;
+        foreach (var userEvent in Model.Usuario.UserEvents)
+        {
+          DateTime dataInicio = Convert.ToDateTime(userEvent.DataInicio);
+          DateTime dataFim = Convert.ToDateTime(userEvent.DataFim);
+          <div class="card" style="@string.Format("background: linear-gradient({0}deg, #000 5%, #F00 50%, #000 95%)", deg)">
+          <div class="card-body"  style="padding-top:10px !important;">
+            <h5 class="card-title" style="color:white; text-align:center; font-size: 20px;">@userEvent.Nome</h5>
+            <h5 class="card-title" style="color: white; text-align: center; font-size: 12px;">@Convert.ToDateTime(userEvent.DataInicio).ToString("dd/MM/yyyy") das @dataInicio.ToString("HH:mm") às @dataFim.ToString("HH:mm")</h5>
+            <div>
+              <p style="color: white; text-align: center; font-size: 18px;">@userEvent.Descricao</p>
+            </div>
+          </div>
+        </div>
+
+        deg = deg + 45;
+        if (deg > 360)
+        {
+          deg = 45;
+        }
+      }
+      }
+    </div>
+    @*<div class="col-md-8">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Aniversário</h5>
+            <div id="aniversario-mensagem">
+            </div>
+          </div>
+        </div>
+      </div>*@
+  </div>
+  </div>
+
+  <script>
+
+  window.onload = function () {
+    var fotoBase64 = "@Html.Raw(Model.Usuario.foto)";
+    if (fotoBase64) {
+      document.getElementById('userProfileImage').src = fotoBase64;
+    }
+
+    @*var dataNascimento = "@Convert.ToDateTime(Model.Usuario.data_nascimento).ToString("yyyy-MM-dd")";
+    var aniversarioDiv = document.getElementById('aniversario-mensagem');
+
+    if (dataNascimento) {
+      var hoje = new Date();
+      var dataNascimentoDate = new Date(dataNascimento);
+      var aniversarioEsteAno = new Date(hoje.getFullYear(), dataNascimentoDate.getMonth(), dataNascimentoDate.getDate());
+
+      var diff = aniversarioEsteAno.getTime() - hoje.getTime();
+      var diffDias = Math.ceil(diff / (1000 * 3600 * 24));
+
+      if (diffDias === 0 && hoje.getDate() === dataNascimentoDate.getDate() && hoje.getMonth() === dataNascimentoDate.getMonth()) {
+        aniversarioDiv.innerHTML = "<p class='text-success'>Parabéns, @Model.Usuario.nome! Hoje é o seu aniversário!</p>";
+      } else if (diffDias > 0) {
+        aniversarioDiv.innerHTML = "<p>Faltam " + diffDias + " dias para o seu aniversário.</p>";
+      } else {
+        var aniversarioProximoAno = new Date(hoje.getFullYear() + 1, dataNascimentoDate.getMonth(), dataNascimentoDate.getDate());
+        var diffProximo = aniversarioProximoAno.getTime() - hoje.getTime();
+        var diffDiasProximo = Math.ceil(diffProximo / (1000 * 3600 * 24));
+        aniversarioDiv.innerHTML = "<p>Faltam " + diffDiasProximo + " dias para o seu aniversário.</p>";
+      }
+    } else {
+      aniversarioDiv.innerHTML = "<p class='text-muted'>Data de nascimento não informada.</p>";
+    }*@
+  };
+  </script>

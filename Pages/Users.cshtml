@@ -1,0 +1,630 @@
+﻿@page
+@model DragoesEscola.Pages.UsersModel
+@{
+  ViewData["Title"] = "Usuários";
+}
+
+<style>
+  .select2-container--open .select2-results__options {
+    max-height: 20px;
+    overflow-y: auto;
+  }
+
+  :root {
+    --primary-color: #5b79e2;
+    --secondary-color: #eef2f7;
+    --accent-color: #435ebf;
+    --text-color: #4a4a4a;
+    --light-text-color: #6c757d;
+    --border-color: #dee2e6;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .tabulator-col-sorter {
+    display: none !important;
+  }
+
+  .tabulator-col-title {
+    padding-right: 0px !important;
+    text-align: center;
+  }
+
+  .tabulator-container {
+    border-radius: 10px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    overflow: hidden;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .tabulator-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+    font-weight: 600;
+    border-bottom: none;
+    padding: 0px 0;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+  }
+
+  .tabulator-col {
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 0 15px;
+  }
+
+    .tabulator-col:last-child {
+      border-right: none;
+    }
+
+  .tabulator-tableHolder {
+    border-radius: 0 0 10px 10px;
+  }
+
+  .tabulator-table {
+    background-color: white;
+  }
+
+  .tabulator-row {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.25s ease-in-out;
+  }
+
+    .tabulator-row:nth-child(even) {
+      background-color: var(--secondary-color);
+    }
+
+    .tabulator-row:hover {
+      background-color: rgba(91, 121, 226, 0.1);
+    }
+
+  .tabulator-cell {
+    padding: 14px 15px;
+    color: var(--text-color);
+    border-right: 1px solid var(--border-color);
+  }
+
+    .tabulator-cell:last-child {
+      border-right: none;
+    }
+
+  .tabulator-footer {
+    background-color: var(--secondary-color);
+    border-top: 1px solid var(--border-color);
+    padding: 10px 15px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    border-radius: 0 0 10px 10px;
+  }
+
+  .tabulator-pages button,
+  .tabulator-page {
+    border-radius: 5px;
+    margin: 0 4px;
+    transition: all 0.3s ease;
+    padding: 8px 12px;
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--light-text-color);
+    cursor: pointer;
+  }
+
+    .tabulator-pages button:hover,
+    .tabulator-page:hover {
+      background-color: var(--border-color);
+      color: var(--text-color);
+    }
+
+    .tabulator-page.active {
+      background-color: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+  .btn-salvar {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+    .btn-salvar:hover {
+      background-color: var(--accent-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+  .tabulator-col[data-field="pago"] .tabulator-col-content,
+  .tabulator-col[data-field="isAdmin"] .tabulator-col-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .tabulator-editable {
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    padding: 4px 8px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    outline: none;
+    padding: 10px 25px !important;
+  }
+
+  .tabulator-holder .tabulator-header-filter input,
+  .tabulator-holder .tabulator-header-filter select {
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+    transition: border-color 0.2s ease;
+  }
+
+    .tabulator-holder .tabulator-header-filter input:focus,
+    .tabulator-holder .tabulator-header-filter select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(91, 121, 226, 0.2);
+      outline: none;
+    }
+</style>
+
+
+<div class="card" style="padding:50px 20px; min-width: 1390px">
+  <h2 class="mb-4">Gestão de Usuários</h2>
+
+  <div id="usersGrid" style="min-width:1350px" class="tabulator-container"></div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<script src="https://unpkg.com/tabulator-tables@5.4.3/dist/js/tabulator.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.7/dayjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.7/locale/pt-br.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+
+<link href="https://unpkg.com/tabulator-tables@5.4.3/dist/css/tabulator.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+
+<script>
+    dayjs.locale('pt-br');
+
+    const usuariosData = @Html.Raw(Json.Serialize(Model.Usuarios.usuarioList));
+    const departamentosData = @Html.Raw(Json.Serialize(Model.Usuarios.departamentos));
+    const formasPgto = ["Dinheiro", "Cartão", "PIX", "Boleto", "Cortesia"];
+    const formasPgtoFilter = {};
+    formasPgto.forEach(f => formasPgtoFilter[f] = f);
+
+    const departamentosDataForSelect2 = departamentosData.map(dept => ({
+        id: dept,
+        text: dept
+    }));
+
+    function customSelect2Editor(cell, onRendered, success, cancel) {
+        const editor = document.createElement("input");
+        editor.setAttribute("type", "text");
+        editor.style.padding = "4px";
+        editor.style.width = "100%";
+        editor.style.boxSizing = "border-box";
+        editor.style.display = "block";
+
+        cell.getElement().appendChild(editor);
+
+        const currentValue = cell.getValue();
+
+        onRendered(function () {
+            $(editor).select2({
+                data: departamentosDataForSelect2,
+                placeholder: "Selecione ou digite um departamento",
+                allowClear: true,
+                width: 'resolve',
+                dropdownParent: $('body')
+            });
+
+            $(editor).val(currentValue).trigger('change');
+
+            $(editor).select2('open');
+
+            $(editor).on("keydown", function (e) {
+                if (e.key === "Enter") {
+                    const selectedData = $(this).select2('data');
+                    if (selectedData && selectedData.length > 0 && selectedData[0].id) {
+                        success(selectedData[0].id);
+                    } else {
+                        cancel();
+                    }
+                    e.stopPropagation();
+                    e.preventDefault();
+                } else if (e.key === "Escape") {
+                    cancel();
+                }
+            });
+        });
+
+        $(editor).on("select2:select", function (e) {
+            success(e.params.data.id);
+        });
+
+        $(editor).on("select2:close", function (e) {
+            const selectedValue = $(this).val();
+
+            if (selectedValue !== null && selectedValue !== "") {
+                success(selectedValue);
+            } else {
+                cancel();
+            }
+        });
+
+        return editor;
+    }
+
+  const customDateEditor = function (cell, onRendered, success, cancel) {
+    const editor = document.createElement("input");
+    editor.setAttribute("type", "text");
+    editor.setAttribute("placeholder", "DD/MM/AAAA");
+    editor.style.padding = "4px";
+    editor.style.width = "100%";
+    editor.style.boxSizing = "border-box";
+    editor.style.border = "1px solid #cbd5e1";
+    editor.style.borderRadius = "0.25rem";
+
+    const initialValue = cell.getValue();
+    if (initialValue) {
+      const parsedDate = dayjs(initialValue);
+      editor.value = parsedDate.isValid() ? parsedDate.format('DD/MM/YYYY') : '';
+    } else {
+      editor.value = "";
+    }
+
+    onRendered(function () {
+      editor.focus();
+      editor.style.height = "100%";
+
+      const flatpickrInstance = flatpickr(editor, {
+        dateFormat: "d/m/Y",
+        allowInput: true, // Allow manual input
+        defaultDate: initialValue ? dayjs(initialValue).toDate() : null,
+        locale: "pt",
+        onClose: function (selectedDates, dateStr, instance) {
+          if (dateStr) {
+            const parsed = dayjs(dateStr, 'DD/MM/YYYY');
+            if (parsed.isValid()) {
+              success(parsed.format('YYYY-MM-DD'));
+            } else {
+              const originalParsed = dayjs(initialValue);
+              if (originalParsed.isValid()) {
+                success(originalParsed.format('YYYY-MM-DD'));
+              } else {
+                success("");
+              }
+            }
+          } else {
+            success("");
+          }
+        },
+        onOpen: function (selectedDates, dateStr, instance) {
+          editor.focus();
+        },
+        onChange: function (selectedDates, dateStr, instance) {
+          // Update the editor's value to reflect the selected date from the calendar
+          editor.value = dateStr;
+        }
+      });
+
+      // Function to format the input as DD/MM/YYYY
+      function formatAsDMYMask(value) {
+        value = value.replace(/\D/g, ''); // Remove all non-digits
+        if (value.length > 8) {
+          value = value.substring(0, 8); // Limit to 8 digits (DDMMYYYY)
+        }
+
+        let formattedValue = '';
+        if (value.length > 0) {
+          formattedValue += value.substring(0, Math.min(value.length, 2)); // Day
+        }
+        if (value.length > 2) {
+          formattedValue += '/' + value.substring(2, Math.min(value.length, 4)); // Month
+        }
+        if (value.length > 4) {
+          formattedValue += '/' + value.substring(4, Math.min(value.length, 8)); // Year
+        }
+        return formattedValue;
+      }
+
+      // Event listener for input to apply the mask
+      editor.addEventListener("input", (e) => {
+        const cursorPosition = editor.selectionStart;
+        const oldValue = editor.value;
+        const newValue = formatAsDMYMask(oldValue);
+
+        editor.value = newValue;
+
+        // Adjust cursor position to account for added slashes
+        let newCursorPosition = cursorPosition;
+        if (newValue.length > oldValue.length) {
+          if (cursorPosition === 3 && newValue.charAt(2) === '/') {
+            newCursorPosition++;
+          }
+          if (cursorPosition === 6 && newValue.charAt(5) === '/') {
+            newCursorPosition++;
+          }
+        }
+        editor.setSelectionRange(newCursorPosition, newCursorPosition);
+      });
+
+      // Ensure that Tabulator's blur doesn't prematurely cancel the Flatpickr interaction
+      editor.addEventListener("blur", function (e) {
+        // This is handled by Flatpickr's onClose, which correctly commits the value
+        // when the calendar or input loses focus. No explicit cancel() here.
+      });
+    });
+
+    return editor;
+  };
+
+    const table = new Tabulator("#usersGrid", {
+        data: usuariosData,
+        layout: "fitDataFill",
+        pagination: "local",
+        paginationSize: 10,
+        paginationSizeSelector: [5, 10, 20, 50],
+        columns: [
+            { title: "ID", field: "id", visible: false },
+            {
+                title: "A",
+                field: "isAdmin",
+                formatter: "tickCross",
+                editor: true,
+                hozAlign: "center",
+                width: "5%",
+                headerFilter: "tickCross",
+                cellEdited: celledit
+            },
+            {
+                title: "R",
+                field: "isScanner",
+                formatter: "tickCross",
+                editor: true,
+                hozAlign: "center",
+                width: "5%",
+                headerFilter: "tickCross",
+                cellEdited: celledit
+            },
+            {
+                title: "Nome",
+                field: "nome",
+                editor: "input",
+                width: "20%",
+                headerFilter: "input",
+                cellEdited: celledit
+            },
+            {
+                title: "Telefone",
+                field: "telefone",
+                headerFilter: "input",
+                formatter: function (cell) {
+                    const value = cell.getValue();
+                    if (!value) return "";
+                    const digitsOnly = value.replace(/\D/g, "");
+
+          if (digitsOnly.length === 11) {
+            return `(${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(
+              2,
+              7
+            )}-${digitsOnly.substring(7, 11)}`;
+          } else if (digitsOnly.length === 10) {
+            return `(${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(
+              2,
+              6
+            )}-${digitsOnly.substring(6, 10)}`;
+          } else if (digitsOnly.length === 9) {
+            return `${digitsOnly.substring(0, 5)}-${digitsOnly.substring(5, 9)}`;
+          } else if (digitsOnly.length === 8) {
+            return `${digitsOnly.substring(0, 4)}-${digitsOnly.substring(4, 8)}`;
+          }
+          return value;
+        },
+        editor: function (cell, onRendered, success, cancel) {
+          const editor = document.createElement("input");
+          editor.setAttribute("type", "text");
+          editor.style.padding = "4px";
+          editor.style.width = "100%";
+          editor.style.boxSizing = "border-box";
+
+          editor.value = cell.getValue() ? cell.getValue().replace(/\D/g, "") : "";
+
+          onRendered(function () {
+            editor.focus();
+            editor.style.height = "100%";
+          });
+
+          function formatPhoneNumber(input) {
+            let value = input.replace(/\D/g, "");
+            let formattedValue = "";
+
+            if (value.length > 2) {
+              formattedValue += `(${value.substring(0, 2)})`;
+              value = value.substring(2);
+            } else {
+              formattedValue += `(${value}`;
+              input = formattedValue;
+              return input;
+            }
+
+            if (value.length > 5) {
+              formattedValue += ` ${value.substring(0, 5)}-`;
+              value = value.substring(5);
+            } else if (value.length > 0) {
+              formattedValue += ` ${value}`;
+              input = formattedValue;
+              return input;
+            }
+
+            if (value.length > 4) {
+              formattedValue += value.substring(0, 4);
+            } else if (value.length > 0) {
+              formattedValue += value;
+            }
+            return formattedValue;
+          }
+
+          editor.addEventListener("input", (e) => {
+            editor.value = formatPhoneNumber(editor.value);
+          });
+
+          editor.addEventListener("change", (e) => {
+            success(editor.value.replace(/\D/g, ""));
+          });
+
+          editor.addEventListener("blur", (e) => {
+            cancel();
+          });
+
+          return editor;
+        },
+        cellEdited: celledit,
+      },
+      {
+        title: "Departamento",
+        field: "departamento",
+        editor: customSelect2Editor,
+        formatter: function (cell) {
+          const value = cell.getValue();
+          const dept = departamentosDataForSelect2.find(d => d.id === value);
+          return dept ? dept.text : value;
+        },
+        width: "18%",
+        headerFilter: "input",
+        cellEdited: celledit
+      },
+      {
+        title: "Pago",
+        field: "pago",
+        formatter: "tickCross",
+        editor: true,
+        hozAlign: "center",
+        width: "8%",
+        headerFilter: "tickCross",
+        cellEdited: celledit
+      },
+      {
+        title: "Valor",
+        field: "valor",
+        formatter: function (cell) {
+          const value = parseFloat(cell.getValue());
+          return isNaN(value) ? "" : value.toFixed(2);
+        },
+        editor: "number",
+        editorParams: {
+        },
+        hozAlign: "center",
+        width: "10%",
+        headerFilter: "number",
+        cellEdited: celledit,
+      },
+      {
+        title: "Forma PG",
+        field: "forma_pgto",
+        editor: "select",
+        editorParams: {
+          values: formasPgto
+        },
+        width: "15%",
+        headerFilter: "input",
+        cellEdited: celledit
+      },
+      {
+        title: "Data PG",
+        field: "data_pagamento",
+        editor: customDateEditor, // This is the updated custom date editor with Flatpickr
+        editorParams: {
+          placeholder: "DD/MM/AAAA" // Placeholder for the date input
+        },
+        formatter: function (cell) {
+          const value = cell.getValue();
+          if (!value) return "";
+
+          const parsedDate = dayjs(value); // Day.js will parse the date
+          return parsedDate.isValid() ? parsedDate.format('DD/MM/YYYY') : value; // Format for display
+        },
+        width: "10%",
+        headerFilter: "date", // Date filter in header
+        headerFilterPlaceholder: "DD/MM/AAAA",
+        cellEdited: celledit
+      }
+    ]
+  });
+
+    function celledit(cell) {
+        const updatedData = cell.getRow().getData();
+        salvarUsuario(updatedData);
+
+        cell.getElement().style.backgroundColor = "#d4edda";
+
+        setTimeout(() => {
+            cell.getElement().style.backgroundColor = "";
+        }, 1000);
+    }
+
+    async function salvarUsuario(data) {
+        let dataPagamentoFormatada = null;
+        if (data.data_pagamento) {
+            const parsedDate = dayjs(data.data_pagamento);
+            if (parsedDate.isValid()) {
+                dataPagamentoFormatada = parsedDate.toISOString();
+            } else {
+                showToast("warning", "Atenção", "Data de Pagamento inválida. Por favor, corrija.");
+                return;
+            }
+        }
+
+        try {
+            const response = await fetch('?handler=Atualizar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    Id: data.id,
+                    isScanner: data.isScanner,
+                    isAdmin: data.isAdmin,
+                    nome: data.nome,
+                    telefone: data.telefone,
+                    departamento: data.departamento,
+                    pago: data.pago,
+                    valor: data.valor,
+                    forma_pgto: data.forma_pgto,
+                    data_pagamento: data.data_pagamento,
+                })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                showToast("success", "Sucesso", "Usuário salvo com sucesso!");
+            } else {
+                showToast("error", "Erro", result.message || "Erro ao salvar usuário");
+            }
+        } catch (error) {
+            showToast("error", "Erro", "Falha na comunicação com o servidor");
+            console.error("Erro:", error);
+        }
+    }
+
+    function showToast(type, title, message) {
+
+    }
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">

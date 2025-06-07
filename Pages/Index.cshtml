@@ -1,0 +1,110 @@
+﻿@page
+@model IndexModel
+@{
+  Layout = null;
+}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ff0000">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <link rel="apple-touch-icon" href="/assets/images/logos/logo-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="DDR 2025">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+
+  <title>Carteirinha DDR 2025</title>
+  <link rel="shortcut icon" type="image/png" href="./assets/images/logos/logo.png" />
+  <link rel="icon" type="image/png" href="./assets/images/logos/logo.png" />
+  <link rel="stylesheet" href="./assets/css/styles.min.css" />
+  <link rel="manifest" href="./assets/manifest.json">
+
+
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+  <style>
+    .elemento {
+      background: linear-gradient(45deg, #000 5%, #F00 50%, #000 95%);
+    }
+
+    .form-label {
+      margin-bottom: 0px !important;
+    }
+  </style>
+</head>
+
+<body class="elemento">
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+       data-sidebar-position="fixed" data-header-position="fixed">
+    <div class="position-relative overflow-hidden min-vh-100 d-flex align-items-center justify-content-center">
+      <div class="d-flex align-items-center justify-content-center w-100">
+        <div class="row justify-content-center w-100">
+          <div class="col-md-8 col-lg-6 col-xxl-3">
+            <div class="card mb-0">
+              <div class="card-body">
+                <a class="text-nowrap logo-img text-center d-block py-3 w-100">
+                  <img src="./assets/images/logos/logo.png" style="width:100px" alt="">
+                </a>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                  <div class="alert alert-danger" style="margin-bottom: 0px;">
+                    <ul style="margin-bottom: 0px !important;">
+                      @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                      {
+                        <li>@error.ErrorMessage</li>
+                      }
+                    </ul>
+                  </div>
+                }
+                <form method="post" style="margin-top: 15px;">
+                  <div class="mb-3">
+                    <label class="form-label">Telefone:</label>
+                    <input asp-for="Input.telefone" type="text" class="form-control telefone-mask">
+                  </div>
+                  <div class="mb-4">
+                    <label for="txtPass" class="form-label">Senha:</label>
+                    <input asp-for="Input.LoginPass" type="password" class="form-control">
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">Entrar</button>
+                  <div class="d-flex">
+                    <div>
+                      <a class="text-primary fw-bold ms-2" href="./Register">Cadastre-se</a>
+                    </div>
+                    <div class="ms-auto" style="padding-right: 5px;">
+                      <a class="text-primary fw-bold ms-2" style="font-weight: 100" href="./ForgetPassword">Esqueci a senha</a>
+                    </div>
+                  </div>
+                  <div class="row col-md-12" style="padding-top: 10px; padding-left: 15px;">
+                    <hr />
+                  </div>
+                  <div class="row col-md-12" style="text-align: center;  padding-left: 15px;">
+                    Caso tenha duvidas. Entre em contato com a Secretária pelo WhatsApp <a href="http://wa.me/5511992826341">(11) 99282-6341</a>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="./assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="./assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://dragoes.dragoesreal.pages.dev/telefone-mask.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+
+</html>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    aplicarMascaraTelefone(".telefone-mask");
+  });
+</script>
