@@ -3,6 +3,13 @@
   "WorkspaceRootPath": "D:\\DRAGOES\\DragoesApp\\DragoesEscola\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\dotnet\\sdk\\9.0.300\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C33653D7-2BEA-451F-ABCE-8A897C4AF3F9}|DragoesEscola.csproj|d:\\dragoes\\dragoesapp\\dragoesescola\\dragoesescola.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{C33653D7-2BEA-451F-ABCE-8A897C4AF3F9}|DragoesEscola.csproj|solutionrelative:dragoesescola.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{C33653D7-2BEA-451F-ABCE-8A897C4AF3F9}|DragoesEscola.csproj|d:\\dragoes\\dragoesapp\\dragoesescola\\utils\\apiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C33653D7-2BEA-451F-ABCE-8A897C4AF3F9}|DragoesEscola.csproj|solutionrelative:utils\\apiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -22,7 +29,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 11,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Bookmark",
@@ -62,7 +69,31 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Microsoft.PackageDependencyResolution.targets",
+              "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\9.0.300\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
+              "ToolTip": "C:\\Program Files\\dotnet\\sdk\\9.0.300\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
+              "ViewState": "AgIAAO0AAAAAAAAAAAAiwAkBAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2025-06-07T23:29:46.752Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "DragoesEscola.csproj",
+              "DocumentMoniker": "D:\\DRAGOES\\DragoesApp\\DragoesEscola\\DragoesEscola.csproj",
+              "RelativeDocumentMoniker": "DragoesEscola.csproj",
+              "ToolTip": "D:\\DRAGOES\\DragoesApp\\DragoesEscola\\DragoesEscola.csproj",
+              "RelativeToolTip": "DragoesEscola.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-06-07T23:27:24.37Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "D:\\DRAGOES\\DragoesApp\\DragoesEscola\\Pages\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "Pages\\Shared\\_Layout.cshtml",
@@ -70,12 +101,11 @@
               "RelativeToolTip": "Pages\\Shared\\_Layout.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-07T22:21:47.599Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-07T22:21:47.599Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "Carteirinha.cshtml",
               "DocumentMoniker": "D:\\DRAGOES\\DragoesApp\\DragoesEscola\\Pages\\Carteirinha.cshtml",
               "RelativeDocumentMoniker": "Pages\\Carteirinha.cshtml",
@@ -83,12 +113,11 @@
               "RelativeToolTip": "Pages\\Carteirinha.cshtml",
               "ViewState": "AgIAAJ8AAAAAAAAAAAAIwLAAAABZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-06-07T22:21:27.948Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-07T22:21:27.948Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "ApiService.cs",
               "DocumentMoniker": "D:\\DRAGOES\\DragoesApp\\DragoesEscola\\Utils\\ApiService.cs",
               "RelativeDocumentMoniker": "Utils\\ApiService.cs",
@@ -96,8 +125,7 @@
               "RelativeToolTip": "Utils\\ApiService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-07T20:18:18.471Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-07T20:18:18.471Z"
             }
           ]
         }

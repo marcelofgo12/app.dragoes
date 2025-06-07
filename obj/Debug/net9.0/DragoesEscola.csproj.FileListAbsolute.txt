@@ -829,7 +829,6 @@ D:\DRAGOES\DragoesApp\DragoesEscola\obj\Debug\net9.0\staticwebassets.build.json
 D:\DRAGOES\DragoesApp\DragoesEscola\obj\Debug\net9.0\staticwebassets.build.json.cache
 D:\DRAGOES\DragoesApp\DragoesEscola\obj\Debug\net9.0\staticwebassets.development.json
 D:\DRAGOES\DragoesApp\DragoesEscola\obj\Debug\net9.0\staticwebassets.build.endpoints.json
-D:\DRAGOES\DragoesApp\DragoesEscola\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 D:\DRAGOES\DragoesApp\DragoesEscola\obj\Debug\net9.0\DragoesE.59957FBC.Up2Date
 D:\DRAGOES\DragoesApp\DragoesEscola\obj\Debug\net9.0\DragoesEscola.dll
 D:\DRAGOES\DragoesApp\DragoesEscola\obj\Debug\net9.0\refint\DragoesEscola.dll
@@ -837,3 +836,4 @@ D:\DRAGOES\DragoesApp\DragoesEscola\obj\Debug\net9.0\DragoesEscola.pdb
 D:\DRAGOES\DragoesApp\DragoesEscola\obj\Debug\net9.0\DragoesEscola.genruntimeconfig.cache
 D:\DRAGOES\DragoesApp\DragoesEscola\obj\Debug\net9.0\ref\DragoesEscola.dll
 D:\DRAGOES\DragoesApp\DragoesEscola\obj\Debug\net9.0\compressed\y22u705r4f-dokdk1ojvc.gz
+D:\DRAGOES\DragoesApp\DragoesEscola\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

@@ -7,9 +7,13 @@ wwwroot\assets\css\icons\tabler-icons\tabler-icons.css
 wwwroot\assets\css\styles.min.css
 wwwroot\assets\css\styles.min.css.map
 wwwroot\assets\images\Carteirinha\2026\Frente.png
+wwwroot\assets\images\Carteirinha\2026\Frente_old.png
 wwwroot\assets\images\Carteirinha\2026\Verso.png
 wwwroot\assets\images\logos\logo.png
+wwwroot\assets\images\logos\logo192.png
+wwwroot\assets\images\logos\logo512.png
 wwwroot\assets\images\profile\user-1.jpg
+wwwroot\assets\images\Theme\background-dragoes.jpg
 wwwroot\assets\images\users\user-4.jpg
 wwwroot\assets\js\app.min.js
 wwwroot\assets\js\dashboard.js
@@ -571,6 +575,7 @@ wwwroot\assets\libs\simplebar\src\index.js
 wwwroot\assets\libs\simplebar\src\scrollbar-width.js
 wwwroot\assets\libs\simplebar\src\simplebar.css
 wwwroot\assets\libs\simplebar\src\simplebar.js
+wwwroot\assets\manifest.json
 wwwroot\assets\scss\component\_card.scss
 wwwroot\assets\scss\component\_reboot.scss
 wwwroot\assets\scss\layouts\_header.scss
@@ -581,15 +586,8 @@ wwwroot\assets\scss\styles.scss
 wwwroot\assets\scss\utilities\_icon-size.scss
 wwwroot\assets\scss\variables\_theme-variables.scss
 wwwroot\assets\scss\variables\_variables.scss
-wwwroot\assets\images\Carteirinha\2026\Frente_old.png
-wwwroot\assets\images\Theme\background-dragoes.jpg
-wwwroot\assets\images\logos\logo512.png
-wwwroot\assets\manifest.json
-wwwroot\assets\images\logos\logo192.png
 D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\css\icons\tabler-icons\fonts\tabler-icons.svg
 D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\css\icons\tabler-icons\tabler-icons.css
-D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\css\styles.min.css
-D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\css\styles.min.css.map
 D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\js\app.min.js
 D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\js\dashboard.js
 D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\js\sidebarmenu.js
@@ -732,6 +730,7 @@ D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\libs\apexcharts\src\modules\a
 D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\libs\apexcharts\src\modules\annotations\PointsAnnotations.js
 D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\libs\apexcharts\src\modules\annotations\XAxisAnnotations.js
 D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\libs\apexcharts\src\modules\annotations\YAxisAnnotations.js
+D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\css\styles.min.css
 D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\libs\apexcharts\src\modules\axes\Axes.js
 D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\libs\apexcharts\src\modules\axes\AxesUtils.js
 D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\libs\apexcharts\src\modules\axes\Grid.js
@@ -1054,3 +1053,4 @@ D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\libs\simplebar\src\scrollbar-
 D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\libs\simplebar\src\simplebar.css
 D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\libs\simplebar\src\simplebar.js
 D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\manifest.json
+D:\DRAGOES\DragoesApp\DragoesEscola\wwwroot\assets\css\styles.min.css.map
