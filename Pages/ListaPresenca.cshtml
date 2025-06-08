@@ -35,7 +35,7 @@
     </div>
   </div>
 
-  <div class="bg-white rounded-lg shadow-lg p-6">
+  @*<div class="bg-white rounded-lg shadow-lg p-6">
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
@@ -86,7 +86,7 @@
         </tbody>
       </table>
     </div>
-  </div>
+  </div>*@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.1.0/dist/jsQR.min.js"></script>
@@ -192,26 +192,29 @@
         if (result.success) {
           //const beep = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=');
           //beep.play();
-          const newRow = `
-                  <tr>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          ${result.qrCode.carterinha}
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          ${result.qrCode.userNome}
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          ${result.qrCode.departamento}
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          ${new Date(result.qrCode.data).toLocaleString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
-                      </td>
-                  </tr>`;
-          const noDataRow = qrCodeTableBody.querySelector('tr td[colspan="2"]');
-          if (noDataRow) {
-            noDataRow.parentElement.remove();
-          }
-          qrCodeTableBody.insertAdjacentHTML('afterbegin', newRow);
+
+
+          //const newRow = `
+          //        <tr>
+          //            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+          //                ${result.qrCode.carterinha}
+          //            </td>
+          //            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+          //                ${result.qrCode.userNome}
+          //            </td>
+          //            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+          //                ${result.qrCode.departamento}
+          //            </td>
+          //            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+          //                ${new Date(result.qrCode.data).toLocaleString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+          //            </td>
+          //        </tr>`;
+          //const noDataRow = qrCodeTableBody.querySelector('tr td[colspan="2"]');
+          //if (noDataRow) {
+          //  noDataRow.parentElement.remove();
+          //}
+          //qrCodeTableBody.insertAdjacentHTML('afterbegin', newRow);
+
 
           $("#mensagemSuccess")[0].innerText = result.message
           $("#divMessageSuccess").show();
@@ -222,7 +225,7 @@
           setTimeout(() => { $("#divMessageSuccess").hide(); }, 3000)
         } else {
 
-          $("#mensagemError")[0].innerText = result.message
+          $("#mensagemError")[0].innerText = result.message + " - " + result.qrCode.userNome
           $("#divMessageError").show();
 
           qrCodeInput.value = '';

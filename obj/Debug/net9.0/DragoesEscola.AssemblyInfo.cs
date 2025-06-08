@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DragoesEscola")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+776bdbff63c2e538b39d1f25b22e217e63eab8b0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f5baa09f902309ac8de607e087c1bc607a9f741c")]
 [assembly: System.Reflection.AssemblyProductAttribute("DragoesEscola")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DragoesEscola")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
